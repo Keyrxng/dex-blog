@@ -1,8 +1,9 @@
 import './App.css'
-import Blog from './components/Blog'
+import Blog from './components/common/Blog'
+import Home from './components/Home'
 
 function App() {
-  return <Blog />
+  return <Home />
 }
 
 export default App
