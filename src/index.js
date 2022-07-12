@@ -1,32 +1,26 @@
 import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import './index.css'
+import { createRoot } from 'react-dom/client'
 import App from './App'
-import reportWebVitals from './reportWebVitals'
+import './index.css'
 import { MoralisProvider } from 'react-moralis'
-import NewPost from './components/NewPost'
-import Home from './components/Home'
+import { NotificationProvider } from 'web3uikit'
+import { BrowserRouter as Router } from 'react-router-dom'
+const rootElement = document.getElementById('root')
+if (!rootElement) throw new Error('Failed to find the root element')
+const root = createRoot(rootElement)
 
-const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
   <React.StrictMode>
     <MoralisProvider
+      initializeOnMount
       appId="xstDCksGRBa48R82OMBuHv7mAZfV4CWtfsSyHBSK"
       serverUrl="https://wfadi11lk1u3.usemoralis.com:2053/server"
     >
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<App />} />
-          <Route path="NewPost" element={<NewPost />} />
-          <Route path="Home" element={<Home />} />
-        </Routes>
-      </BrowserRouter>
+      <NotificationProvider>
+        <Router>
+          <App />
+        </Router>
+      </NotificationProvider>
     </MoralisProvider>
   </React.StrictMode>,
 )
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals()
