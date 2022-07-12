@@ -11,6 +11,9 @@
 # production
 /build
 ./dlt/build
+/abis
+/build
+/artifacts
 
 # misc
 .DS_Store

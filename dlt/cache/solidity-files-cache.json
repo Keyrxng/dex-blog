@@ -633,8 +633,8 @@
       ]
     },
     "C:\\Users\\kiera\\Desktop\\Keyrxng\\dex-blog\\dlt\\contracts\\BlogNFT.sol": {
-      "lastModificationDate": 1657612920298,
-      "contentHash": "a21c57cfa4292caaec0e716dce02bb9d",
+      "lastModificationDate": 1657626012002,
+      "contentHash": "0092d24d8c9efca6b5dd3da19c73f619",
       "sourceName": "contracts/BlogNFT.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -669,7 +669,7 @@
         "0.8.4"
       ],
       "artifacts": [
-        "BlogGen"
+        "BlogNFT"
       ]
     },
     "C:\\Users\\kiera\\Desktop\\Keyrxng\\dex-blog\\node_modules\\@openzeppelin\\contracts\\utils\\Counters.sol": {

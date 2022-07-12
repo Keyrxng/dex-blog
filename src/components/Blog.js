@@ -1,8 +1,39 @@
 import { useEffect, useState } from 'react'
 import './Blog.css'
+import { useParams } from 'react-router-dom'
+import axios from 'axios'
+
+const Url = 'https://ipfs.io/ipfs'
 
 const Blog = () => {
-  return <div className="singleBlog"></div>
+  const [title, setTitle] = useState('')
+  const [text, setText] = useState('')
+
+  const { url } = useParams()
+
+  const fetchBlogsContent = async () => {
+    const res = await axios.get(`${Url}/${url}`)
+    setTitle(res.data.title)
+    const text = res.data.text.toString()
+    setText(text)
+  }
+
+  useEffect(() => {
+    if (!title || !text) {
+      fetchBlogsContent()
+    }
+  }, [text, title])
+
+  return (
+    <div className="singleBlog">
+      <div className="singleBlogWrapper">
+        <div className="singleBlogContent">
+          <h1 className="singleBlogTitle">{title}</h1>
+          <p className="singleBlogText">{text}</p>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default Blog
