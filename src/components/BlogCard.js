@@ -5,7 +5,7 @@ const BlogCard = ({ text, title, ownerOf, externalUrl }) => {
   const length = 100
   const trimmedString = text.length > 100 ? text.substring(0, length) : text
 
-  const account = `${ownerOf.slice(0.4)}...${ownerOf.slice(30)}`
+  const account = `${ownerOf.slice(0, 4)}...${ownerOf.slice(38)}`
 
   const navigate = useNavigate()
 
@@ -19,10 +19,10 @@ const BlogCard = ({ text, title, ownerOf, externalUrl }) => {
       <div className="blog_leftSide">
         <div className="blogger">
           <span className="blogger_name">{account}</span>
-          <span className="blogger_date">1337th</span>
+          <span className="blogger_date">Mar 21</span>
         </div>
         <div className="blog_title">
-          <h1>{title}...</h1>
+          <h3>{title}</h3>
         </div>
         <div className="blog_content">
           <p>{trimmedString}...</p>
@@ -32,7 +32,7 @@ const BlogCard = ({ text, title, ownerOf, externalUrl }) => {
         <div>
           <img
             className="blog_image"
-            src="https://ipfs.io/ipfs/QmWEsG4ayh75BMk2H1CowAdALPjsi3fD7CSZ6qxNM1yNnz/image/moralis.png"
+            src="https://ipfs.moralis.io:2053/ipfs/QmWEsG4ayh75BMk2H1CowAdALPjsi3fD7CSZ6qxNM1yNnz/image/moralis.png"
             alt=""
           />
         </div>

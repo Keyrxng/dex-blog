@@ -2,30 +2,22 @@ import { useState, useEffect } from 'react'
 import './HomeAuth.css'
 import axios from 'axios'
 import BlogCard from '../components/BlogCard'
-import {
-  getChain,
-  useMoralisWeb3Api,
-  useChain,
-  getSupportedChains,
-  chainId,
-} from 'react-moralis'
-import { providers } from 'ethers'
+import { useMoralisWeb3Api } from 'react-moralis'
 
 const HomeAuth = () => {
-  const [blogs, setBlogs] = useState()
+  const [blogs, setBlogs] = useState([])
   const [blogsContent, setBlogsContent] = useState()
-  const web3API = useMoralisWeb3Api()
+  const Web3Api = useMoralisWeb3Api()
 
   const fetchAllNfts = async () => {
-    let chain = getChain()
-    console.log(chain)
     const options = {
-      chain: chain,
-      address: '0x03CbFEf147843a1A98882964f234C1BEEc8B4693',
+      chain: '0x61',
+      address: '0x934772EE88CB749E827f720564061B80D2054D36',
     }
 
-    const fujiNFTS = await web3API.token.getNFTOwners(options)
-    const tokenUri = fujiNFTS?.result?.map((data) => {
+    const polygonNFTs = await Web3Api.token.getNFTOwners(options)
+    console.log('Owners:', polygonNFTs)
+    const tokenUri = polygonNFTs?.result?.map((data) => {
       const { metadata, owner_of } = data
 
       if (metadata) {
@@ -37,13 +29,15 @@ const HomeAuth = () => {
       }
     })
     setBlogs(tokenUri)
+    console.log('tokens uri:', tokenUri)
   }
 
   const fetchBlogsContent = async () => {
-    const limit = blogs?.slice(0, 5)
+    const limit5 = blogs?.slice(0, 5)
     let contentBlog = []
-    if (limit) {
-      limit.map(async (blog) => {
+
+    if (limit5) {
+      limit5.map(async (blog) => {
         if (blog) {
           const { externalUrl, owner_of } = blog
           const res = await axios.get(externalUrl)
@@ -62,8 +56,9 @@ const HomeAuth = () => {
       fetchBlogsContent()
     }
   }, [blogs, blogsContent])
+
   useEffect(() => {
-    if (!blogs) {
+    if (blogs) {
       fetchAllNfts()
     }
   }, [blogs])

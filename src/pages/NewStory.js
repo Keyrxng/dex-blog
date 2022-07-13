@@ -1,23 +1,463 @@
 import { useState } from 'react'
+import './NewStory.css'
 import {
-  useMoralis,
   useMoralisFile,
+  useMoralis,
   useWeb3ExecuteFunction,
 } from 'react-moralis'
-import swal from 'sweetalert'
-import './NewStory.css'
-import abi from '../abis/BlogNFT.json'
 
 const NewStory = () => {
   const [title, setTitle] = useState('')
   const [text, setText] = useState('')
   const { saveFile } = useMoralisFile()
-  const { Moralis, account, isWeb3Enabled, enableWeb3 } = useMoralis()
-  const contractPlug = useWeb3ExecuteFunction()
+  const { Moralis, account } = useMoralis()
+  const contractProcessor = useWeb3ExecuteFunction()
+
+  const theABI = [
+    {
+      inputs: [
+        {
+          internalType: 'string',
+          name: '_name',
+          type: 'string',
+        },
+        {
+          internalType: 'string',
+          name: '_symbol',
+          type: 'string',
+        },
+        {
+          internalType: 'uint256',
+          name: '_fee',
+          type: 'uint256',
+        },
+      ],
+      stateMutability: 'nonpayable',
+      type: 'constructor',
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: 'address',
+          name: 'owner',
+          type: 'address',
+        },
+        {
+          indexed: true,
+          internalType: 'address',
+          name: 'approved',
+          type: 'address',
+        },
+        {
+          indexed: true,
+          internalType: 'uint256',
+          name: 'tokenId',
+          type: 'uint256',
+        },
+      ],
+      name: 'Approval',
+      type: 'event',
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: 'address',
+          name: 'owner',
+          type: 'address',
+        },
+        {
+          indexed: true,
+          internalType: 'address',
+          name: 'operator',
+          type: 'address',
+        },
+        {
+          indexed: false,
+          internalType: 'bool',
+          name: 'approved',
+          type: 'bool',
+        },
+      ],
+      name: 'ApprovalForAll',
+      type: 'event',
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: 'address',
+          name: 'previousOwner',
+          type: 'address',
+        },
+        {
+          indexed: true,
+          internalType: 'address',
+          name: 'newOwner',
+          type: 'address',
+        },
+      ],
+      name: 'OwnershipTransferred',
+      type: 'event',
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: 'address',
+          name: 'from',
+          type: 'address',
+        },
+        {
+          indexed: true,
+          internalType: 'address',
+          name: 'to',
+          type: 'address',
+        },
+        {
+          indexed: true,
+          internalType: 'uint256',
+          name: 'tokenId',
+          type: 'uint256',
+        },
+      ],
+      name: 'Transfer',
+      type: 'event',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: 'to',
+          type: 'address',
+        },
+        {
+          internalType: 'uint256',
+          name: 'tokenId',
+          type: 'uint256',
+        },
+      ],
+      name: 'approve',
+      outputs: [],
+      stateMutability: 'nonpayable',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: 'owner',
+          type: 'address',
+        },
+      ],
+      name: 'balanceOf',
+      outputs: [
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [],
+      name: 'fees',
+      outputs: [
+        {
+          internalType: 'uint256',
+          name: '',
+          type: 'uint256',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'uint256',
+          name: 'tokenId',
+          type: 'uint256',
+        },
+      ],
+      name: 'getApproved',
+      outputs: [
+        {
+          internalType: 'address',
+          name: '',
+          type: 'address',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: 'owner',
+          type: 'address',
+        },
+        {
+          internalType: 'address',
+          name: 'operator',
+          type: 'address',
+        },
+      ],
+      name: 'isApprovedForAll',
+      outputs: [
+        {
+          internalType: 'bool',
+          name: '',
+          type: 'bool',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [],
+      name: 'name',
+      outputs: [
+        {
+          internalType: 'string',
+          name: '',
+          type: 'string',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [],
+      name: 'owner',
+      outputs: [
+        {
+          internalType: 'address',
+          name: '',
+          type: 'address',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'uint256',
+          name: 'tokenId',
+          type: 'uint256',
+        },
+      ],
+      name: 'ownerOf',
+      outputs: [
+        {
+          internalType: 'address',
+          name: '',
+          type: 'address',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [],
+      name: 'renounceOwnership',
+      outputs: [],
+      stateMutability: 'nonpayable',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: '_to',
+          type: 'address',
+        },
+        {
+          internalType: 'string',
+          name: '_uri',
+          type: 'string',
+        },
+      ],
+      name: 'safeMint',
+      outputs: [],
+      stateMutability: 'payable',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: 'from',
+          type: 'address',
+        },
+        {
+          internalType: 'address',
+          name: 'to',
+          type: 'address',
+        },
+        {
+          internalType: 'uint256',
+          name: 'tokenId',
+          type: 'uint256',
+        },
+      ],
+      name: 'safeTransferFrom',
+      outputs: [],
+      stateMutability: 'nonpayable',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: 'from',
+          type: 'address',
+        },
+        {
+          internalType: 'address',
+          name: 'to',
+          type: 'address',
+        },
+        {
+          internalType: 'uint256',
+          name: 'tokenId',
+          type: 'uint256',
+        },
+        {
+          internalType: 'bytes',
+          name: 'data',
+          type: 'bytes',
+        },
+      ],
+      name: 'safeTransferFrom',
+      outputs: [],
+      stateMutability: 'nonpayable',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: 'operator',
+          type: 'address',
+        },
+        {
+          internalType: 'bool',
+          name: 'approved',
+          type: 'bool',
+        },
+      ],
+      name: 'setApprovalForAll',
+      outputs: [],
+      stateMutability: 'nonpayable',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'bytes4',
+          name: 'interfaceId',
+          type: 'bytes4',
+        },
+      ],
+      name: 'supportsInterface',
+      outputs: [
+        {
+          internalType: 'bool',
+          name: '',
+          type: 'bool',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [],
+      name: 'symbol',
+      outputs: [
+        {
+          internalType: 'string',
+          name: '',
+          type: 'string',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'uint256',
+          name: 'tokenId',
+          type: 'uint256',
+        },
+      ],
+      name: 'tokenURI',
+      outputs: [
+        {
+          internalType: 'string',
+          name: '',
+          type: 'string',
+        },
+      ],
+      stateMutability: 'view',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: 'from',
+          type: 'address',
+        },
+        {
+          internalType: 'address',
+          name: 'to',
+          type: 'address',
+        },
+        {
+          internalType: 'uint256',
+          name: 'tokenId',
+          type: 'uint256',
+        },
+      ],
+      name: 'transferFrom',
+      outputs: [],
+      stateMutability: 'nonpayable',
+      type: 'function',
+    },
+    {
+      inputs: [
+        {
+          internalType: 'address',
+          name: 'newOwner',
+          type: 'address',
+        },
+      ],
+      name: 'transferOwnership',
+      outputs: [],
+      stateMutability: 'nonpayable',
+      type: 'function',
+    },
+  ]
 
   const mint = async (account, uri) => {
+    // const options = {
+    //   chain: '0x61',
+    //   address: '0x934772EE88CB749E827f720564061B80D2054D36',
+    // }
+
     let options = {
-      contractAddress: '0x03CbFEf147843a1A98882964f234C1BEEc8B4693',
+      contractAddress: '0x934772EE88CB749E827f720564061B80D2054D36',
       functionName: 'safeMint',
       abi: [
         {
@@ -43,58 +483,23 @@ const NewStory = () => {
         _to: account,
         _uri: uri,
       },
-      msgValue: Moralis.Units.ETH('0.01'),
-    }
-
-    let options1 = {
-      contractAddress: '0xEA5e2D4CaAeD0520a38EcCBbc175E857AB14bD16',
-      functionName: 'safeMint',
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: 'address',
-              name: 'to',
-              type: 'address',
-            },
-            {
-              internalType: 'string',
-              name: 'uri',
-              type: 'string',
-            },
-          ],
-          name: 'safeMint',
-          outputs: [],
-          stateMutability: 'payable',
-          type: 'function',
-        },
-      ],
-      params: {
-        to: account,
-        uri: uri,
-      },
       msgValue: Moralis.Units.ETH(1),
     }
 
-    console.log('test')
-    await contractPlug.fetch({
+    await contractProcessor.fetch({
       params: options,
       onSuccess: () => {
-        alert('Successful mint', { icon: 'success' })
+        alert('Succesful Mint')
         setText('')
         setTitle('')
       },
       onError: (error) => {
-        console.log(error, { icon: 'warning' })
+        alert(error.message)
       },
     })
   }
 
   const uploadFile = async (event) => {
-    if (!isWeb3Enabled) {
-      enableWeb3()
-    }
-    console.log(isWeb3Enabled)
     event.preventDefault()
     const textArray = text.split()
     const metadata = {
@@ -103,7 +508,7 @@ const NewStory = () => {
     }
 
     try {
-      const res = await saveFile(
+      const result = await saveFile(
         'myblog.json',
         { base64: btoa(JSON.stringify(metadata)) },
         {
@@ -111,22 +516,22 @@ const NewStory = () => {
           saveIPFS: true,
         },
       )
-      const nftResult = await uploadNftMetadata(res.ipfs())
+      console.log('result:', result)
+
+      const nftResult = await uploadNftMetada(result.ipfs())
+
       await mint(account, nftResult.ipfs())
-      //   swal(
-      //     'Here is your censorship resistant url to your blog piece: ',
-      //     nftResult.ipfs(),
-      //     { icon: 'success' },
-      //   )
+      console.log('hash:', nftResult.ipfs())
+      console.log('nfRsult:', nftResult)
     } catch (error) {
-      console.log(error.message, { icon: 'warning' })
+      alert(error.message)
     }
   }
 
-  const uploadNftMetadata = async (url) => {
+  const uploadNftMetada = async (url) => {
     const metadataNft = {
       image:
-        'https://ipfs.io/ipfs/QmWEsG4ayh75BMk2H1CowAdALPjsi3fD7CSZ6qxNM1yNnz/image/moralis.png',
+        'https://ipfs.moralis.io:2053/ipfs/QmWEsG4ayh75BMk2H1CowAdALPjsi3fD7CSZ6qxNM1yNnz/image/moralis.png',
       description: title,
       externalUrl: url,
     }
@@ -138,7 +543,6 @@ const NewStory = () => {
         saveIPFS: true,
       },
     )
-
     return resultNft
   }
 
@@ -159,7 +563,7 @@ const NewStory = () => {
           <div className="writeFormGroup">
             <textarea
               className="writeInput writeText"
-              placeholder="tell your story..."
+              placeholder="Tell your story..."
               autoFocus={true}
               value={text}
               onChange={(e) => setText(e.target.value)}

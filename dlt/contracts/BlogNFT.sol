@@ -16,7 +16,7 @@ contract BlogNFT is ERC721, ERC721URIStorage, Ownable {
         fees = _fee;
     }
 
-    function safeMint(address _to, string calldata _uri) public payable {
+    function safeMint(address _to, string memory _uri) public payable {
         require(msg.value >= fees, "not enough eth");
         payable(owner()).transfer(fees);
 
@@ -24,6 +24,7 @@ contract BlogNFT is ERC721, ERC721URIStorage, Ownable {
         _tokenIdCounter.increment();
         _safeMint(_to, tokenId);
         _setTokenURI(tokenId, _uri);
+        _set
 
         uint contractBal = address(this).balance;
 
@@ -37,7 +38,7 @@ contract BlogNFT is ERC721, ERC721URIStorage, Ownable {
     }
 
     function tokenURI(uint tokenId) public view override(ERC721, ERC721URIStorage) returns(string memory){
-        super.tokenURI(tokenId);
+        tokenURI(tokenId);
     }
 
 }

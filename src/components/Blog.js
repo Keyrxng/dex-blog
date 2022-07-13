@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react'
 import './Blog.css'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
-
-const Url = 'https://ipfs.io/ipfs'
+const Url = 'https://ipfs.io/ipfs/'
 
 const Blog = () => {
   const [title, setTitle] = useState('')
@@ -11,7 +10,7 @@ const Blog = () => {
 
   const { url } = useParams()
 
-  const fetchBlogsContent = async () => {
+  const fetchBlogContent = async () => {
     const res = await axios.get(`${Url}/${url}`)
     setTitle(res.data.title)
     const text = res.data.text.toString()
@@ -20,7 +19,7 @@ const Blog = () => {
 
   useEffect(() => {
     if (!title || !text) {
-      fetchBlogsContent()
+      fetchBlogContent()
     }
   }, [text, title])
 

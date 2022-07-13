@@ -9,26 +9,29 @@ import { useMoralisWeb3Api, useMoralis, getChain } from 'react-moralis'
 const MyBlogs = () => {
   const Web3API = useMoralisWeb3Api()
   const { isAuthenticated, account, isInitialized } = useMoralis()
-  const [blogs, setBlogs] = useState()
+  const [blogs, setBlogs] = useState([])
   const [blogsContent, setBlogsContent] = useState()
 
   const navigate = useNavigate()
 
   const fetchAllNfts = async () => {
-    let chain = getChain()
-    console.log('chain', chain)
     const options = {
-      chain: chain,
+      chain: '0x61',
       address: account,
-      token_address: '0x03CbFEf147843a1A98882964f234C1BEEc8B4693',
+      token_address: '0x934772EE88CB749E827f720564061B80D2054D36',
     }
 
     const fujiNFTS = await Web3API.account.getNFTsForContract(options)
+    console.log('fujiNFTS', fujiNFTS)
+
     const tokenUri = fujiNFTS?.result?.map((data) => {
       const { metadata, owner_of } = data
+      console.log('data', data)
 
       if (metadata) {
         const metadataObj = JSON.parse(metadata)
+        console.log('metadataObj', metadataObj)
+
         const { externalUrl } = metadataObj
         return { externalUrl, owner_of }
       } else {
@@ -36,7 +39,6 @@ const MyBlogs = () => {
       }
     })
     setBlogs(tokenUri)
-    console.log(blogs)
   }
 
   const fetchBlogsContent = async () => {
